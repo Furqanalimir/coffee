@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 	"microservices/micro-service/coffee/utils"
@@ -35,8 +36,22 @@ func (p *Products) ToJson(w io.Writer) error {
 	return e.Encode(p)
 }
 
+func (p *Product) ToJson(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(p)
+}
+
 func GetProducts() Products {
 	return productList
+}
+
+func GetProduct(id int) (*Product, error) {
+	for _, f := range productList {
+		if f.ID == id {
+			return f, nil
+		}
+	}
+	return &Product{}, errors.New("item not found")
 }
 
 func GetNextId() int {
